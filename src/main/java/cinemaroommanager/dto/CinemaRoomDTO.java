@@ -1,6 +1,6 @@
-package cinema.dto;
+package cinemaroommanager.dto;
 
-import cinema.model.CinemaRoom;
+import cinemaroommanager.model.CinemaRoom;
 import cinema.model.Seat;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package cinema.model;
+package cinemaroommanager.model;
 
 public class Seat {
     private final int row;

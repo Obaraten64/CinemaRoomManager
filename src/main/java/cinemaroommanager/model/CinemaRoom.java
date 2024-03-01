@@ -1,4 +1,4 @@
-package cinema.model;
+package cinemaroommanager.model;
 
 import java.util.ArrayList;
 

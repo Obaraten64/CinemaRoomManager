@@ -1,7 +1,7 @@
-package cinema.controller;
+package cinemaroommanager.controller;
 
-import cinema.dto.CinemaRoomDTO;
-import cinema.service.CinemaService;
+import cinemaroommanager.dto.CinemaRoomDTO;
+import cinemaroommanager.service.CinemaService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
