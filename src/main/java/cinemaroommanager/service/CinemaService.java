@@ -1,13 +1,18 @@
 package cinemaroommanager.service;
 
+import cinemaroommanager.configuration.CinemaConfig;
 import cinemaroommanager.dto.CinemaRoomDTO;
 import cinemaroommanager.model.CinemaRoom;
 
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
-@RestController
+@Service
 public class CinemaService {
-    CinemaRoom cinemaRoom = new CinemaRoom();
+    private final CinemaRoom cinemaRoom;
+
+    public CinemaService(CinemaConfig cinemaConfig) {
+        cinemaRoom = new CinemaRoom(cinemaConfig.getNumberOfColumns(), cinemaConfig.getNumberOfRows());
+    }
 
     public CinemaRoomDTO getCinemaRoom() {
         return new CinemaRoomDTO(cinemaRoom);

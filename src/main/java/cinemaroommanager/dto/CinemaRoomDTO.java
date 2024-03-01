@@ -8,6 +8,6 @@ import java.util.ArrayList;
 public record CinemaRoomDTO(int rows, int columns, ArrayList<Seat> seats) {
 
     public CinemaRoomDTO(CinemaRoom cinemaRoom) {
-        this(CinemaRoom.getNumberOfRows(), CinemaRoom.getNumberOfColumns(), cinemaRoom.getSeats());
+        this(cinemaRoom.getNumberOfRows(), cinemaRoom.getNumberOfColumns(), cinemaRoom.getSeats());
     }
 }
