@@ -1,5 +1,7 @@
 package cinemaroommanager.model;
 
+import cinemaroommanager.dto.SeatDTO;
+
 import java.util.ArrayList;
 
 public class CinemaRoom {
@@ -24,6 +26,13 @@ public class CinemaRoom {
 
     public int getNumberOfColumns() {
         return NUMBER_OF_COLUMNS;
+    }
+
+    public Seat getSeat(SeatDTO seatDTO) {
+        return seats.stream()
+                .filter(s -> s.getRow() == seatDTO.row()
+                        && s.getColumn() == seatDTO.column())
+                .findFirst().get();
     }
 
     public ArrayList<Seat> getSeats() {
