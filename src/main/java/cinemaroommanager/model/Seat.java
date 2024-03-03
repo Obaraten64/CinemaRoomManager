@@ -1,5 +1,7 @@
 package cinemaroommanager.model;
 
+import cinemaroommanager.dto.SeatDTO;
+
 public class Seat {
     private final int row;
     private final int column;
