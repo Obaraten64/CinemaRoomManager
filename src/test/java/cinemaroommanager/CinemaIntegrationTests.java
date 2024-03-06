@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -16,8 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CinemaIntegrationTests {
     @Autowired
     private MockMvc mockMvc;
@@ -43,7 +44,6 @@ public class CinemaIntegrationTests {
 
     @Test
     @DisplayName("Test for POST /purchase endpoint")
-    @Order(1)
     void testEndpointPurchase() throws Exception {
         var requestBuilder = post("/purchase")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -69,12 +69,11 @@ public class CinemaIntegrationTests {
 
     @Test
     @DisplayName("Test for POST /purchase endpoint(when ticket is purchased)")
-    @Order(2)
     void testEndpointPurchasePurchasedException() throws Exception {
         var requestBuilder = post("/purchase")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"row\":1,\n\"column\":1}");
-        //mockMvc.perform(requestBuilder);
+        mockMvc.perform(requestBuilder); //purchase seat before testing exception
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error")
