@@ -1,5 +1,6 @@
-package cinemaroommanager.dto;
+package cinemaroommanager.dto.responses;
 
+import cinemaroommanager.dto.SeatDTO;
 import cinemaroommanager.model.CinemaRoom;
 
 import java.util.ArrayList;

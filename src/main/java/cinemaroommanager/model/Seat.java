@@ -2,7 +2,10 @@ package cinemaroommanager.model;
 
 import cinemaroommanager.dto.SeatDTO;
 
+import java.util.UUID;
+
 public class Seat {
+    private UUID uuid;
     private final int row;
     private final int column;
     private final int price;
@@ -19,6 +22,10 @@ public class Seat {
         row = seatDTO.row();
         column = seatDTO.column();
         price = row < 5 ? 10 : 8;
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     public int getRow() {
@@ -39,5 +46,6 @@ public class Seat {
 
     public void purchase() {
         isPurchased = true;
+        uuid = UUID.randomUUID();
     }
 }
