@@ -1,8 +1,9 @@
 package cinemaroommanager;
 
-import cinemaroommanager.dto.CinemaRoomDTO;
+import cinemaroommanager.dto.responses.CinemaRoomDTO;
 import cinemaroommanager.dto.SeatDTO;
-import cinemaroommanager.exception.SeatPurchaseException;
+import cinemaroommanager.dto.responses.Ticket;
+import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.model.CinemaRoom;
 import cinemaroommanager.model.Seat;
 import cinemaroommanager.service.CinemaService;
@@ -60,8 +61,8 @@ class CinemaRoomManagerApplicationTests {
     @Test
     @DisplayName("Test for POST /purchase endpoint")
     void testEndpointPurchase() throws Exception {
-        var mockSeatDTO = new SeatDTO(new Seat(1, 1));
-        when(cinemaService.purchaseSeat(new SeatDTO(1, 1))).thenReturn(mockSeatDTO);
+        var mockTicket = new Ticket(new Seat(1, 1));
+        when(cinemaService.purchaseSeat(new SeatDTO(1, 1))).thenReturn(mockTicket);
 
         var requestBuilder = post("/purchase")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -77,7 +78,7 @@ class CinemaRoomManagerApplicationTests {
     @DisplayName("Test for POST /purchase endpoint(with row out of bounds)")
     void testEndpointPurchaseOutOfBoundsException() throws Exception {
         when(cinemaService.purchaseSeat(new SeatDTO(15, 1)))
-                .thenThrow(new SeatPurchaseException("The number of a row or a column is out of bounds!"));
+                .thenThrow(new PurchaseSeatException("The number of a row or a column is out of bounds!"));
 
         var requestBuilder = post("/purchase")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -92,7 +93,7 @@ class CinemaRoomManagerApplicationTests {
     @DisplayName("Test for POST /purchase endpoint(when ticket is purchased)")
     void testEndpointPurchasePurchasedException() throws Exception {
         when(cinemaService.purchaseSeat(new SeatDTO(1, 1)))
-                .thenThrow(new SeatPurchaseException("The ticket has been already purchased!"));
+                .thenThrow(new PurchaseSeatException("The ticket has been already purchased!"));
 
         var requestBuilder = post("/purchase")
                 .contentType(MediaType.APPLICATION_JSON)

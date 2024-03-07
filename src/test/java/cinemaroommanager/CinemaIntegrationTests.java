@@ -50,9 +50,11 @@ public class CinemaIntegrationTests {
                 .content("{\"row\":1,\n\"column\":1}");
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.row").value(1))
-                .andExpect(jsonPath("$.column").value(1))
-                .andExpect(jsonPath("$.price").value(10));
+                .andExpect(jsonPath("$.token").isString())
+                .andExpect(jsonPath("$.token").value(Matchers.hasLength(36)))
+                .andExpect(jsonPath("$.ticket.row").value(1))
+                .andExpect(jsonPath("$.ticket.column").value(1))
+                .andExpect(jsonPath("$.ticket.price").value(10));
     }
 
     @Test
