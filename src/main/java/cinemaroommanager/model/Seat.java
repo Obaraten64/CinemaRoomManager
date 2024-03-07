@@ -44,8 +44,13 @@ public class Seat {
         return isPurchased;
     }
 
-    public void purchase() {
+    public void purchaseSeat() {
         isPurchased = true;
         uuid = UUID.randomUUID();
+    }
+
+    public void returnSeat() {
+        isPurchased = false;
+        uuid = null;
     }
 }

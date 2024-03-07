@@ -4,11 +4,15 @@ import cinemaroommanager.configuration.CinemaConfig;
 import cinemaroommanager.dto.responses.CinemaRoomDTO;
 import cinemaroommanager.dto.SeatDTO;
 import cinemaroommanager.dto.responses.Ticket;
-import cinemaroommanager.exception.SeatPurchaseException;
+import cinemaroommanager.dto.responses.ReturnedTicket;
+import cinemaroommanager.exception.PurchaseSeatException;
+import cinemaroommanager.exception.ReturnSeatException;
 import cinemaroommanager.model.CinemaRoom;
 import cinemaroommanager.model.Seat;
 
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class CinemaService {
@@ -24,7 +28,7 @@ public class CinemaService {
 
     public Ticket purchaseSeat(SeatDTO seatDTO) {
         if (validateSeat(seatDTO)) {
-            throw new SeatPurchaseException("The number of a row or a column is out of bounds!");
+            throw new PurchaseSeatException("The number of a row or a column is out of bounds!");
         }
 
         Seat seat = cinemaRoom.getSeats()
@@ -33,11 +37,25 @@ public class CinemaService {
                         && s.getColumn() == seatDTO.column())
                 .findFirst().get();
         if (seat.isPurchased()) {
-            throw new SeatPurchaseException("The ticket has been already purchased!");
+            throw new PurchaseSeatException("The ticket has been already purchased!");
         }
 
-        seat.purchase();
+        seat.purchaseSeat();
         return new Ticket(seat);
+    }
+
+    public ReturnedTicket returnTicket(UUID uuid) {
+        Seat seat = cinemaRoom.getSeats()
+                .stream()
+                .filter(s -> uuid.equals(s.getUuid()))
+                .findFirst()
+                .orElse(null);
+        if (seat == null) {
+            throw new ReturnSeatException("Wrong token!");
+        }
+
+        seat.returnSeat();
+        return new ReturnedTicket(new SeatDTO(seat));
     }
 
     private boolean validateSeat(SeatDTO seatDTO) {

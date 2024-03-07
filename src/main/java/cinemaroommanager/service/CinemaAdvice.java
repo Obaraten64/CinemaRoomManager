@@ -1,6 +1,7 @@
 package cinemaroommanager.service;
 
-import cinemaroommanager.exception.SeatPurchaseException;
+import cinemaroommanager.exception.PurchaseSeatException;
+import cinemaroommanager.exception.ReturnSeatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -11,9 +12,15 @@ import java.util.Map;
 @RestControllerAdvice
 public class CinemaAdvice {
 
-    @ExceptionHandler(SeatPurchaseException.class)
+    @ExceptionHandler(PurchaseSeatException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleSeatException(SeatPurchaseException exception) {
+    public Map<String, String> handleSeatException(PurchaseSeatException exception) {
+        return Map.of("error", exception.getMessage());
+    }
+
+    @ExceptionHandler(ReturnSeatException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleReturnSeatException(ReturnSeatException exception) {
         return Map.of("error", exception.getMessage());
     }
 }

@@ -1,7 +1,9 @@
 package cinemaroommanager.controller;
 
+import cinemaroommanager.dto.requests.Token;
 import cinemaroommanager.dto.responses.CinemaRoomDTO;
 import cinemaroommanager.dto.SeatDTO;
+import cinemaroommanager.dto.responses.ReturnedTicket;
 import cinemaroommanager.dto.responses.Ticket;
 import cinemaroommanager.service.CinemaService;
 
@@ -28,5 +30,8 @@ public class CinemaController {
         return cinemaService.purchaseSeat(seatDTO);
     }
 
-
+    @PostMapping("/return")
+    public ReturnedTicket returnTicket(@RequestBody Token token) {
+        return cinemaService.returnTicket(token.token());
+    }
 }
