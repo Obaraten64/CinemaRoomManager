@@ -81,4 +81,40 @@ public class CinemaIntegrationTests {
                 .andExpect(jsonPath("$.error")
                         .value("The ticket has been already purchased!"));
     }
+
+    @Test
+    @DisplayName("Test for POST /return endpoint")
+    void testEndpointReturn() throws Exception {
+        var requestBuilder = post("/purchase")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"row\":1,\"column\":1}");
+        String token = mockMvc.perform(requestBuilder)
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .split(",")[0]
+                .split(":")[1]
+                .replaceAll("\"", ""); //purchase seat before testing exception);
+        System.out.println(token);
+        requestBuilder = post("/return")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"token\":\"" + token + "\"}");
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.ticket.row").value(1))
+                .andExpect(jsonPath("$.ticket.column").value(1))
+                .andExpect(jsonPath("$.ticket.price").value(10));
+    }
+
+    @Test
+    @DisplayName("Test for POST /return endpoint(when token is expired)")
+    void testEndpointReturnTicketException() throws Exception {
+        var requestBuilder = post("/return")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"token\":\"409548d1-2f6b-4180-8f70-5800c77c17a8\"}");
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error")
+                        .value("Wrong token!"));
+    }
 }

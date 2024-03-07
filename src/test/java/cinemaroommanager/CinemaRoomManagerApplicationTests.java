@@ -2,8 +2,10 @@ package cinemaroommanager;
 
 import cinemaroommanager.dto.responses.CinemaRoomDTO;
 import cinemaroommanager.dto.SeatDTO;
+import cinemaroommanager.dto.responses.ReturnedTicket;
 import cinemaroommanager.dto.responses.Ticket;
 import cinemaroommanager.exception.PurchaseSeatException;
+import cinemaroommanager.exception.ReturnSeatException;
 import cinemaroommanager.model.CinemaRoom;
 import cinemaroommanager.model.Seat;
 import cinemaroommanager.service.CinemaService;
@@ -20,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -61,7 +64,7 @@ class CinemaRoomManagerApplicationTests {
     @Test
     @DisplayName("Test for POST /purchase endpoint")
     void testEndpointPurchase() throws Exception {
-        var mockTicket = new Ticket(new Seat(1, 1));
+        var mockTicket = new Ticket(UUID.randomUUID(),new SeatDTO(1, 1, 10));
         when(cinemaService.purchaseSeat(new SeatDTO(1, 1))).thenReturn(mockTicket);
 
         var requestBuilder = post("/purchase")
@@ -69,9 +72,11 @@ class CinemaRoomManagerApplicationTests {
                 .content("{\"row\":1,\n\"column\":1}");
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.row").value(1))
-                .andExpect(jsonPath("$.column").value(1))
-                .andExpect(jsonPath("$.price").value(10));
+                .andExpect(jsonPath("$.token").isString())
+                .andExpect(jsonPath("$.token").value(Matchers.hasLength(36)))
+                .andExpect(jsonPath("$.ticket.row").value(1))
+                .andExpect(jsonPath("$.ticket.column").value(1))
+                .andExpect(jsonPath("$.ticket.price").value(10));
     }
 
     @Test
@@ -102,5 +107,36 @@ class CinemaRoomManagerApplicationTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error")
                         .value("The ticket has been already purchased!"));
+    }
+
+    @Test
+    @DisplayName("Test for POST /return endpoint")
+    void testEndpointReturn() throws Exception {
+        when(cinemaService.returnTicket(UUID.fromString("409548d1-2f6b-4180-8f70-5800c77c17a8")))
+                .thenReturn(new ReturnedTicket(new SeatDTO(1, 1, 10)));
+
+        var requestBuilder = post("/return")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"token\":\"409548d1-2f6b-4180-8f70-5800c77c17a8\"}");
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.ticket.row").value(1))
+                .andExpect(jsonPath("$.ticket.column").value(1))
+                .andExpect(jsonPath("$.ticket.price").value(10));
+    }
+
+    @Test
+    @DisplayName("Test for POST /return endpoint(when token is expired)")
+    void testEndpointReturnTicketException() throws Exception {
+        when(cinemaService.returnTicket(UUID.fromString("409548d1-2f6b-4180-8f70-5800c77c17a8")))
+                .thenThrow(new ReturnSeatException("Wrong token!"));
+
+        var requestBuilder = post("/return")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"token\":\"409548d1-2f6b-4180-8f70-5800c77c17a8\"}");
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error")
+                        .value("Wrong token!"));
     }
 }
