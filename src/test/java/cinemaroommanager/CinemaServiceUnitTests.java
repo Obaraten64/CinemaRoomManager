@@ -2,8 +2,10 @@ package cinemaroommanager;
 
 import cinemaroommanager.dto.SeatDTO;
 import cinemaroommanager.dto.responses.CinemaRoomDTO;
+import cinemaroommanager.dto.responses.ReturnedTicket;
 import cinemaroommanager.dto.responses.Ticket;
 import cinemaroommanager.exception.PurchaseSeatException;
+import cinemaroommanager.exception.ReturnSeatException;
 import cinemaroommanager.model.CinemaRoom;
 import cinemaroommanager.model.Seat;
 import cinemaroommanager.service.CinemaService;
@@ -26,10 +28,10 @@ public class CinemaServiceUnitTests {
 
     @Test
     void testGetCinemaRoom() {
-        CinemaRoomDTO cinemaRoomDTO = new CinemaRoomDTO(new CinemaRoom(9, 9));
+        CinemaRoomDTO expect = new CinemaRoomDTO(new CinemaRoom(9, 9));
 
-        CinemaRoomDTO expect = cinemaService.getCinemaRoom();
-        Assertions.assertEquals(cinemaRoomDTO, expect);
+        CinemaRoomDTO cinemaRoomDTO = cinemaService.getCinemaRoom();
+        Assertions.assertEquals(expect, cinemaRoomDTO);
     }
 
     @Test
@@ -38,29 +40,53 @@ public class CinemaServiceUnitTests {
             mock.when(UUID::randomUUID).thenReturn(new UUID(1, 10));
             Seat seat = new Seat(1, 1);
             seat.purchaseSeat();
-            Ticket ticket = new Ticket(seat);
+            Ticket expect = new Ticket(seat);
 
-            Ticket expect = cinemaService.purchaseSeat(new SeatDTO(1, 1));
-            Assertions.assertEquals(ticket, expect);
+            Ticket ticket = cinemaService.purchaseSeat(new SeatDTO(1, 1));
+            Assertions.assertEquals(expect, ticket);
         }
     }
 
     @Test
     void testPurchaseTicketOutOfBounds() {
-        Exception expect = Assertions.assertThrows(PurchaseSeatException.class,
+        Exception exception = Assertions.assertThrows(PurchaseSeatException.class,
                 () -> cinemaService.purchaseSeat(new SeatDTO(15, 1)));
 
-        Assertions.assertEquals("The number of a row or a column is out of bounds!", expect.getMessage());
+        Assertions.assertEquals("The number of a row or a column is out of bounds!", exception.getMessage());
     }
 
     @Test
     void testPurchaseTicketAlreadyPurchased() {
-        SeatDTO seatDTO = new SeatDTO(1, 1);
-        cinemaService.purchaseSeat(seatDTO);
+        purchaseTicketForTest();
 
-        Exception expect = Assertions.assertThrows(PurchaseSeatException.class,
-                () -> cinemaService.purchaseSeat(seatDTO));
+        Exception exception = Assertions.assertThrows(PurchaseSeatException.class,
+                () -> cinemaService.purchaseSeat(new SeatDTO(1, 1)));
 
-        Assertions.assertEquals("The ticket has been already purchased!", expect.getMessage());
+        Assertions.assertEquals("The ticket has been already purchased!", exception.getMessage());
+    }
+
+    @Test
+    void testReturnTicket() {
+        try (var mock = mockStatic(UUID.class)) {
+            mock.when(UUID::randomUUID).thenReturn(new UUID(1, 10));
+            ReturnedTicket expect = new ReturnedTicket(new SeatDTO(1, 1, 10));
+
+            UUID token = purchaseTicketForTest();
+            ReturnedTicket ticket = cinemaService.returnTicket(token);
+            Assertions.assertEquals(expect, ticket);
+        }
+    }
+
+    @Test
+    void testReturnTicketWrongToken() {
+        Exception exception = Assertions.assertThrows(ReturnSeatException.class,
+                () -> cinemaService.returnTicket(UUID.randomUUID()));
+
+        Assertions.assertEquals("Wrong token!", exception.getMessage());
+    }
+
+    private UUID purchaseTicketForTest() {
+        return cinemaService.purchaseSeat(new SeatDTO(1, 1))
+                .token();
     }
 }
