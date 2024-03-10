@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.lang.reflect.Executable;
 import java.util.UUID;
 
 import static org.mockito.Mockito.mockStatic;
@@ -48,8 +47,20 @@ public class CinemaServiceUnitTests {
 
     @Test
     void testPurchaseTicketOutOfBounds() {
-        Assertions.assertThrows(PurchaseSeatException.class,
-                () -> cinemaService.purchaseSeat(new SeatDTO(15, 1)),
-                "The number of a row or a column is out of bounds!");
+        Exception expect = Assertions.assertThrows(PurchaseSeatException.class,
+                () -> cinemaService.purchaseSeat(new SeatDTO(15, 1)));
+
+        Assertions.assertEquals("The number of a row or a column is out of bounds!", expect.getMessage());
+    }
+
+    @Test
+    void testPurchaseTicketAlreadyPurchased() {
+        SeatDTO seatDTO = new SeatDTO(1, 1);
+        cinemaService.purchaseSeat(seatDTO);
+
+        Exception expect = Assertions.assertThrows(PurchaseSeatException.class,
+                () -> cinemaService.purchaseSeat(seatDTO));
+
+        Assertions.assertEquals("The ticket has been already purchased!", expect.getMessage());
     }
 }
