@@ -1,5 +1,8 @@
 package cinemaroommanager;
 
+import cinemaroommanager.dto.SeatDTO;
+import cinemaroommanager.service.CinemaService;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,10 +75,12 @@ public class CinemaIntegrationTests {
     @Test
     @DisplayName("Test for POST /purchase endpoint(when ticket is purchased)")
     void testEndpointPurchasePurchasedException() throws Exception {
+        //TODO: Update tests with prepopulation of service instead of performing another request
+        purchaseTicketForTest(); //purchase seat before testing exception
+
         var requestBuilder = post("/purchase")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"row\":1,\n\"column\":1}");
-        mockMvc.perform(requestBuilder); //purchase seat before testing exception
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error")
@@ -85,18 +90,10 @@ public class CinemaIntegrationTests {
     @Test
     @DisplayName("Test for POST /return endpoint")
     void testEndpointReturn() throws Exception {
-        var requestBuilder = post("/purchase")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"row\":1,\"column\":1}");
-        String token = mockMvc.perform(requestBuilder)
-                .andReturn()
-                .getResponse()
-                .getContentAsString()
-                .split(",")[0]
-                .split(":")[1]
-                .replaceAll("\"", ""); //purchase seat before testing exception);
-        System.out.println(token);
-        requestBuilder = post("/return")
+        //TODO: Update tests with prepopulation of service instead of performing another request
+        String token = purchaseTicketForTest(); //purchase seat before testing exception);
+
+        var requestBuilder = post("/return")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"token\":\"" + token + "\"}");
         mockMvc.perform(requestBuilder)
@@ -116,5 +113,13 @@ public class CinemaIntegrationTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error")
                         .value("Wrong token!"));
+    }
+
+    @Autowired
+    CinemaService cinemaService;
+    private String purchaseTicketForTest() {
+        return cinemaService.purchaseSeat(new SeatDTO(1, 1))
+                .token()
+                .toString();
     }
 }
