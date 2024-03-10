@@ -3,21 +3,21 @@ package cinemaroommanager;
 import cinemaroommanager.dto.SeatDTO;
 import cinemaroommanager.dto.responses.CinemaRoomDTO;
 import cinemaroommanager.dto.responses.Ticket;
+import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.model.CinemaRoom;
 import cinemaroommanager.model.Seat;
 import cinemaroommanager.service.CinemaService;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.lang.reflect.Executable;
 import java.util.UUID;
 
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -44,5 +44,12 @@ public class CinemaServiceUnitTests {
             Ticket expect = cinemaService.purchaseSeat(new SeatDTO(1, 1));
             Assertions.assertEquals(ticket, expect);
         }
+    }
+
+    @Test
+    void testPurchaseTicketOutOfBounds() {
+        Assertions.assertThrows(PurchaseSeatException.class,
+                () -> cinemaService.purchaseSeat(new SeatDTO(15, 1)),
+                "The number of a row or a column is out of bounds!");
     }
 }
