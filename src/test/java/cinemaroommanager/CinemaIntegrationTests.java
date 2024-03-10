@@ -75,7 +75,6 @@ public class CinemaIntegrationTests {
     @Test
     @DisplayName("Test for POST /purchase endpoint(when ticket is purchased)")
     void testEndpointPurchasePurchasedException() throws Exception {
-        //TODO: Update tests with prepopulation of service instead of performing another request
         purchaseTicketForTest(); //purchase seat before testing exception
 
         var requestBuilder = post("/purchase")
@@ -90,7 +89,6 @@ public class CinemaIntegrationTests {
     @Test
     @DisplayName("Test for POST /return endpoint")
     void testEndpointReturn() throws Exception {
-        //TODO: Update tests with prepopulation of service instead of performing another request
         String token = purchaseTicketForTest(); //purchase seat before testing exception);
 
         var requestBuilder = post("/return")
