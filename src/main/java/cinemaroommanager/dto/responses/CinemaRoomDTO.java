@@ -1,18 +1,9 @@
 package cinemaroommanager.dto.responses;
 
 import cinemaroommanager.dto.SeatDTO;
-import cinemaroommanager.model.CinemaRoom;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public record CinemaRoomDTO(int rows, int columns, ArrayList<SeatDTO> seats) {
+public record CinemaRoomDTO(int rows, int columns, List<SeatDTO> seats) {
 
-    public CinemaRoomDTO(CinemaRoom cinemaRoom) {
-        this(cinemaRoom.getNumberOfRows(),
-                cinemaRoom.getNumberOfColumns(),
-                new ArrayList<>(cinemaRoom.getSeats()
-                        .stream()
-                        .map(SeatDTO::new)
-                        .toList()));
-    }
 }
