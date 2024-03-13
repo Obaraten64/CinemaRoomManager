@@ -7,7 +7,7 @@ import cinemaroommanager.dto.responses.ReturnedTicket;
 import cinemaroommanager.dto.responses.Ticket;
 import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.exception.ReturnSeatException;
-import cinemaroommanager.model.CinemaRoom;
+import cinemaroommanager.model.Seat;
 import cinemaroommanager.service.CinemaService;
 
 import org.hamcrest.Matchers;
@@ -20,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,8 +41,7 @@ class CinemaControllerTest {
     @Test
     @DisplayName("Test for GET /seats endpoint")
     void testEndpointsGetSeats() throws Exception {
-        var mockCinemaRoomDTO = new CinemaRoomDTO(
-                new CinemaRoom(9, 9));
+        var mockCinemaRoomDTO = new CinemaRoomDTO(9, 9, getSeats());
         when(cinemaService.getCinemaRoom()).thenReturn(mockCinemaRoomDTO);
 
         var requestBuilder = get("/seats");
@@ -58,6 +58,16 @@ class CinemaControllerTest {
                         .value(Matchers.hasSize(81)))
                 .andExpect(jsonPath("$.seats[?(@.price == 10 || @.price == 8)]")
                         .value(Matchers.hasSize(81)));
+    }
+
+    private List<SeatDTO> getSeats() {
+        ArrayList<Seat> seats = new ArrayList<>(9 * 9);
+        for (int i = 1; i <= 9; i++) {
+            for (int j = 1; j <= 9; j++) {
+                seats.add(new Seat(i, j));
+            }
+        }
+        return seats.stream().map(SeatDTO::new).toList();
     }
 
     @Test
