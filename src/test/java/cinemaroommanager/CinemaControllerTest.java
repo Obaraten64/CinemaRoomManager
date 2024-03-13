@@ -1,5 +1,6 @@
 package cinemaroommanager;
 
+import cinemaroommanager.controller.CinemaController;
 import cinemaroommanager.dto.responses.CinemaRoomDTO;
 import cinemaroommanager.dto.SeatDTO;
 import cinemaroommanager.dto.responses.ReturnedTicket;
@@ -7,7 +8,6 @@ import cinemaroommanager.dto.responses.Ticket;
 import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.exception.ReturnSeatException;
 import cinemaroommanager.model.CinemaRoom;
-import cinemaroommanager.model.Seat;
 import cinemaroommanager.service.CinemaService;
 
 import org.hamcrest.Matchers;
@@ -15,8 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,9 +28,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-class CinemaRoomManagerApplicationTests {
+@WebMvcTest(CinemaController.class)
+class CinemaControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
