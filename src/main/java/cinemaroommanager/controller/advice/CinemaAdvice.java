@@ -1,4 +1,4 @@
-package cinemaroommanager.service;
+package cinemaroommanager.controller.advice;
 
 import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.exception.ReturnSeatException;
