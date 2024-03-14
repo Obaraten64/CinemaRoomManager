@@ -1,7 +1,6 @@
 package cinemaroommanager;
 
-import cinemaroommanager.configuration.CinemaConfig;
-import cinemaroommanager.dto.SeatDTO;
+import cinemaroommanager.dto.requests.PurchaseTicketRequest;
 import cinemaroommanager.service.CinemaService;
 
 import org.hamcrest.Matchers;
@@ -9,39 +8,23 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@TestPropertySource(locations = {"classpath:testApp.properties"})
 public class CinemaRoomIT {
-
-    @TestConfiguration
-    public static class TestConfig {
-
-        @Bean
-        @Primary
-        public CinemaConfig initConfig() { //changes in CinemaConfig
-            CinemaConfig cinemaConfig = mock(CinemaConfig.class);
-            when(cinemaConfig.getNumberOfColumns()).thenReturn(9);
-            when(cinemaConfig.getNumberOfRows()).thenReturn(9);
-            return cinemaConfig;
-        }
-    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -136,7 +119,7 @@ public class CinemaRoomIT {
     @Autowired
     CinemaService cinemaService;
     private String purchaseTicketForTest() { //don't like this
-        return cinemaService.purchaseSeat(new SeatDTO(1, 1))
+        return cinemaService.purchaseSeat(new PurchaseTicketRequest(1, 1))
                 .token()
                 .toString();
     }
