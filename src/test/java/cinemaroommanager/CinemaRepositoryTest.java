@@ -44,8 +44,6 @@ public class CinemaRepositoryTest {
     void testGetSeatByUUID() {
         try (var mock = mockStatic(UUID.class)) {
             mock.when(UUID::randomUUID).thenReturn(new UUID(1, 10));
-            mock.when(() -> UUID.fromString("0"))
-                    .thenReturn(new UUID(1, 64));
 
             Seat seat = cinemaRepository.getSeats().get(2);
             seat.purchaseSeat();
@@ -55,8 +53,10 @@ public class CinemaRepositoryTest {
                     .isPresent()
                     .map(s -> List.of(s.getRow(), s.getColumn(), s.getPrice()))
                     .contains(List.of(1, 3, 10));
-            assertThat(cinemaRepository.getSeatByUUID(UUID.fromString("0")))
-                    .isNotPresent();
         }
+
+        UUID uuidFromString = UUID.fromString("409548d1-2f6b-4180-8f70-5800c77c17a8");
+        assertThat(cinemaRepository.getSeatByUUID(uuidFromString))
+                .isNotPresent();
     }
 }
