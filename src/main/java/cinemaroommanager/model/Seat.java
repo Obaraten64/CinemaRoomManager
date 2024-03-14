@@ -1,7 +1,5 @@
 package cinemaroommanager.model;
 
-import cinemaroommanager.dto.SeatDTO;
-
 import java.util.UUID;
 
 public class Seat {
@@ -16,12 +14,6 @@ public class Seat {
         this.row = row;
         price = row < 5 ? 10 : 8;
         isPurchased = false;
-    }
-
-    public Seat(SeatDTO seatDTO) {
-        row = seatDTO.row();
-        column = seatDTO.column();
-        price = row < 5 ? 10 : 8;
     }
 
     public UUID getUuid() {

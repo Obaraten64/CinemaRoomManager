@@ -1,10 +1,10 @@
 package cinemaroommanager.controller;
 
+import cinemaroommanager.dto.requests.PurchaseTicketRequest;
 import cinemaroommanager.dto.requests.Token;
 import cinemaroommanager.dto.responses.CinemaRoomDTO;
-import cinemaroommanager.dto.SeatDTO;
 import cinemaroommanager.dto.responses.ReturnedTicket;
-import cinemaroommanager.dto.responses.Ticket;
+import cinemaroommanager.dto.responses.PurchaseTicketResponse;
 import cinemaroommanager.service.CinemaService;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +26,8 @@ public class CinemaController {
     }
 
     @PostMapping("/purchase")
-    public Ticket purchaseSeat(@RequestBody SeatDTO seatDTO) {
-        return cinemaService.purchaseSeat(seatDTO);
+    public PurchaseTicketResponse purchaseSeat(@RequestBody PurchaseTicketRequest ticket) {
+        return cinemaService.purchaseSeat(ticket);
     }
 
     @PostMapping("/return")

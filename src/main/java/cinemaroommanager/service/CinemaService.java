@@ -1,8 +1,9 @@
 package cinemaroommanager.service;
 
+import cinemaroommanager.dto.requests.PurchaseTicketRequest;
 import cinemaroommanager.dto.responses.CinemaRoomDTO;
-import cinemaroommanager.dto.SeatDTO;
-import cinemaroommanager.dto.responses.Ticket;
+import cinemaroommanager.dto.responses.SeatDTO;
+import cinemaroommanager.dto.responses.PurchaseTicketResponse;
 import cinemaroommanager.dto.responses.ReturnedTicket;
 import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.exception.ReturnSeatException;
@@ -30,12 +31,11 @@ public class CinemaService {
                         .toList());
     }
 
-    public Ticket purchaseSeat(SeatDTO seatDTO) {
+    public PurchaseTicketResponse purchaseSeat(PurchaseTicketRequest ticket) {
         /*if (validateSeat(seatDTO)) {
             throw new PurchaseSeatException("The number of a row or a column is out of bounds!");
         }*/
-
-        Seat seat = cinemaRepository.getSeatByRowAndColumn(seatDTO.row(), seatDTO.column())
+        Seat seat = cinemaRepository.getSeatByRowAndColumn(ticket.row(), ticket.column())
                 .orElseThrow(() ->
                         new PurchaseSeatException("The number of a row or a column is out of bounds!"));
 
@@ -44,7 +44,7 @@ public class CinemaService {
         }
 
         seat.purchaseSeat();
-        return new Ticket(seat);
+        return new PurchaseTicketResponse(seat);
     }
 
     public ReturnedTicket returnTicket(UUID uuid) {
@@ -52,6 +52,6 @@ public class CinemaService {
                 .orElseThrow(() -> new ReturnSeatException("Wrong token!"));
 
         seat.returnSeat();
-        return new ReturnedTicket(new SeatDTO(seat));
+        return new ReturnedTicket(seat);
     }
 }
