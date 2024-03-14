@@ -1,15 +1,16 @@
 package cinemaroommanager;
 
 import cinemaroommanager.controller.CinemaController;
+import cinemaroommanager.dto.requests.PurchaseTicketRequest;
 import cinemaroommanager.dto.responses.CinemaRoomDTO;
-import cinemaroommanager.dto.SeatDTO;
+import cinemaroommanager.dto.responses.SeatDTO;
 import cinemaroommanager.dto.responses.ReturnedTicket;
-import cinemaroommanager.dto.responses.Ticket;
+import cinemaroommanager.dto.responses.PurchaseTicketResponse;
 import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.exception.ReturnSeatException;
-import cinemaroommanager.model.Seat;
 import cinemaroommanager.service.CinemaService;
 
+import cinemaroommanager.util.TestUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +41,12 @@ class CinemaControllerTest {
     @Test
     @DisplayName("Test for GET /seats endpoint")
     void testEndpointsGetSeats() throws Exception {
-        var mockCinemaRoomDTO = new CinemaRoomDTO(9, 9, getSeats());
+        var mockCinemaRoomDTO = new CinemaRoomDTO(9, 9,
+                TestUtils.getSeats()
+                        .stream()
+                        .map(SeatDTO::new)
+                        .toList());
+
         when(cinemaService.getCinemaRoom()).thenReturn(mockCinemaRoomDTO);
 
         var requestBuilder = get("/seats");
@@ -60,21 +65,12 @@ class CinemaControllerTest {
                         .value(Matchers.hasSize(81)));
     }
 
-    private List<SeatDTO> getSeats() {
-        ArrayList<Seat> seats = new ArrayList<>(9 * 9);
-        for (int i = 1; i <= 9; i++) {
-            for (int j = 1; j <= 9; j++) {
-                seats.add(new Seat(i, j));
-            }
-        }
-        return seats.stream().map(SeatDTO::new).toList();
-    }
-
     @Test
     @DisplayName("Test for POST /purchase endpoint")
     void testEndpointPurchase() throws Exception {
-        var mockTicket = new Ticket(UUID.randomUUID(),new SeatDTO(1, 1, 10));
-        when(cinemaService.purchaseSeat(new SeatDTO(1, 1))).thenReturn(mockTicket);
+        var mockTicket = new PurchaseTicketResponse(UUID.randomUUID(),new SeatDTO(1, 1, 10));
+        when(cinemaService.purchaseSeat(new PurchaseTicketRequest(1, 1)))
+                .thenReturn(mockTicket);
 
         var requestBuilder = post("/purchase")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +87,7 @@ class CinemaControllerTest {
     @Test
     @DisplayName("Test for POST /purchase endpoint(with row out of bounds)")
     void testEndpointPurchaseOutOfBoundsException() throws Exception {
-        when(cinemaService.purchaseSeat(new SeatDTO(15, 1)))
+        when(cinemaService.purchaseSeat(new PurchaseTicketRequest(15, 1)))
                 .thenThrow(new PurchaseSeatException("The number of a row or a column is out of bounds!"));
 
         var requestBuilder = post("/purchase")
@@ -106,7 +102,7 @@ class CinemaControllerTest {
     @Test
     @DisplayName("Test for POST /purchase endpoint(when ticket is purchased)")
     void testEndpointPurchasePurchasedException() throws Exception {
-        when(cinemaService.purchaseSeat(new SeatDTO(1, 1)))
+        when(cinemaService.purchaseSeat(new PurchaseTicketRequest(1, 1)))
                 .thenThrow(new PurchaseSeatException("The ticket has been already purchased!"));
 
         var requestBuilder = post("/purchase")
