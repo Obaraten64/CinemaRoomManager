@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CinemaController {
-    CinemaService cinemaService;
+    private final CinemaService cinemaService;
 
     public CinemaController(CinemaService cinemaService) {
         this.cinemaService = cinemaService;
