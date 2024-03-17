@@ -51,4 +51,16 @@ public class CinemaRepositoryInMemory {
                 .filter(s -> uuid.equals(s.getUuid()))
                 .findFirst();
     }
+
+    public List<Seat> getAvailableSeats() {
+        return seats.stream()
+                .filter(s -> !s.isPurchased())
+                .toList();
+    }
+
+    public List<Seat> getPurchasedSeats() {
+        return seats.stream()
+                .filter(Seat::isPurchased)
+                .toList();
+    }
 }

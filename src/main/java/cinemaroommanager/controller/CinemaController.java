@@ -5,12 +5,10 @@ import cinemaroommanager.dto.requests.Token;
 import cinemaroommanager.dto.responses.CinemaRoomDTO;
 import cinemaroommanager.dto.responses.ReturnedTicket;
 import cinemaroommanager.dto.responses.PurchaseTicketResponse;
+import cinemaroommanager.dto.responses.StatsDTO;
 import cinemaroommanager.service.CinemaService;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class CinemaController {
@@ -33,5 +31,10 @@ public class CinemaController {
     @PostMapping("/return")
     public ReturnedTicket returnTicket(@RequestBody Token token) {
         return cinemaService.returnTicket(token.token());
+    }
+
+    @GetMapping("/stats")
+    public StatsDTO getStats(@RequestParam(required = false) String password) {
+        return cinemaService.getStats(password);
     }
 }
