@@ -1,12 +1,10 @@
 package cinemaroommanager;
 
 import cinemaroommanager.dto.requests.PurchaseTicketRequest;
-import cinemaroommanager.dto.responses.SeatDTO;
-import cinemaroommanager.dto.responses.CinemaRoomDTO;
-import cinemaroommanager.dto.responses.ReturnedTicket;
-import cinemaroommanager.dto.responses.PurchaseTicketResponse;
+import cinemaroommanager.dto.responses.*;
 import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.exception.ReturnSeatException;
+import cinemaroommanager.exception.StatsException;
 import cinemaroommanager.model.Seat;
 import cinemaroommanager.repository.CinemaRepositoryInMemory;
 import cinemaroommanager.service.CinemaService;
@@ -20,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -112,5 +111,23 @@ public class CinemaServiceTest {
         assertThatThrownBy(() -> cinemaService.returnTicket(UUID.fromString(uuid)))
                 .isInstanceOf(ReturnSeatException.class)
                 .hasMessage("Wrong token!");
+    }
+
+    @Test
+    void testGetStats() {
+        StatsDTO expect = new StatsDTO(0, 81, 0);
+
+        List<Seat> seats = TestUtils.getSeats();
+        when(cinemaRepository.getAvailableSeats()).thenReturn(seats);
+        when(cinemaRepository.getPurchasedSeats()).thenReturn(new ArrayList<>(0));
+
+        assertThat(cinemaService.getStats("super_secret")).isEqualTo(expect);
+    }
+
+    @Test
+    void testGetStats_WrongPassword() {
+        assertThatThrownBy(() -> cinemaService.getStats(null))
+                .isInstanceOf(StatsException.class)
+                .hasMessage("The password is wrong!");
     }
 }
