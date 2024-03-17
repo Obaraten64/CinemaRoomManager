@@ -6,6 +6,7 @@ import cinemaroommanager.model.Seat;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,8 +35,8 @@ public class CinemaRepositoryInMemory {
         return rows;
     }
 
-    public ArrayList<Seat> getSeats() {
-        return new ArrayList<>(seats);
+    public List<Seat> getSeats() {
+        return List.copyOf(seats);
     }
 
     public Optional<Seat> getSeatByRowAndColumn(int row, int column) {
