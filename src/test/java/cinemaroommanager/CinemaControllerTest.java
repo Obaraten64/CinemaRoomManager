@@ -2,12 +2,10 @@ package cinemaroommanager;
 
 import cinemaroommanager.controller.CinemaController;
 import cinemaroommanager.dto.requests.PurchaseTicketRequest;
-import cinemaroommanager.dto.responses.CinemaRoomDTO;
-import cinemaroommanager.dto.responses.SeatDTO;
-import cinemaroommanager.dto.responses.ReturnedTicket;
-import cinemaroommanager.dto.responses.PurchaseTicketResponse;
+import cinemaroommanager.dto.responses.*;
 import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.exception.ReturnSeatException;
+import cinemaroommanager.exception.StatsException;
 import cinemaroommanager.service.CinemaService;
 
 import cinemaroommanager.util.TestUtils;
@@ -86,7 +84,7 @@ class CinemaControllerTest {
 
     @Test
     @DisplayName("Test for POST /purchase endpoint(with row out of bounds)")
-    void testEndpointPurchaseOutOfBoundsException() throws Exception {
+    void testEndpointPurchase_OutOfBoundsException() throws Exception {
         when(cinemaService.purchaseSeat(new PurchaseTicketRequest(15, 1)))
                 .thenThrow(new PurchaseSeatException("The number of a row or a column is out of bounds!"));
 
@@ -101,7 +99,7 @@ class CinemaControllerTest {
 
     @Test
     @DisplayName("Test for POST /purchase endpoint(when ticket is purchased)")
-    void testEndpointPurchasePurchasedException() throws Exception {
+    void testEndpointPurchase_PurchasedException() throws Exception {
         when(cinemaService.purchaseSeat(new PurchaseTicketRequest(1, 1)))
                 .thenThrow(new PurchaseSeatException("The ticket has been already purchased!"));
 
@@ -116,7 +114,7 @@ class CinemaControllerTest {
 
     @Test
     @DisplayName("Test for POST /return endpoint")
-    void testEndpointReturn() throws Exception {
+    void testEndpointReturnTicket() throws Exception {
         when(cinemaService.returnTicket(UUID.fromString("409548d1-2f6b-4180-8f70-5800c77c17a8")))
                 .thenReturn(new ReturnedTicket(new SeatDTO(1, 1, 10)));
 
@@ -132,7 +130,7 @@ class CinemaControllerTest {
 
     @Test
     @DisplayName("Test for POST /return endpoint(when token is expired)")
-    void testEndpointReturnTicketException() throws Exception {
+    void testEndpointReturn_TicketException() throws Exception {
         when(cinemaService.returnTicket(UUID.fromString("409548d1-2f6b-4180-8f70-5800c77c17a8")))
                 .thenThrow(new ReturnSeatException("Wrong token!"));
 
@@ -143,5 +141,31 @@ class CinemaControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error")
                         .value("Wrong token!"));
+    }
+
+    @Test
+    @DisplayName("Test for GET /stats endpoint")
+    void testEndpointGetStats() throws Exception {
+        when(cinemaService.getStats("super_secret"))
+                .thenReturn(new StatsDTO(0, 81, 0));
+
+        var requestBuilder = get("/stats?password=super_secret");
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.income").value(0))
+                .andExpect(jsonPath("$.available").value(81))
+                .andExpect(jsonPath("$.purchased").value(0));
+    }
+
+    @Test
+    @DisplayName("Test for GET /stats endpoint with wrong password")
+    void testEndpointGetStats_WrongPassword() throws Exception {
+        when(cinemaService.getStats(null))
+                .thenThrow(new StatsException("The password is wrong!"));
+
+        var requestBuilder = get("/stats");
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("The password is wrong!"));
     }
 }

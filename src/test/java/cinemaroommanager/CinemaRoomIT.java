@@ -123,4 +123,24 @@ public class CinemaRoomIT {
                 .token()
                 .toString();
     }
+
+    @Test
+    @DisplayName("Test for GET /stats endpoint")
+    void testEndpointGetStats() throws Exception {
+        var requestBuilder = get("/stats?password=super_secret");
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.income").value(0))
+                .andExpect(jsonPath("$.available").value(81))
+                .andExpect(jsonPath("$.purchased").value(0));
+    }
+
+    @Test
+    @DisplayName("Test for GET /stats endpoint with wrong password")
+    void testEndpointGetStats_WrongPassword() throws Exception {
+        var requestBuilder = get("/stats");
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("The password is wrong!"));
+    }
 }
