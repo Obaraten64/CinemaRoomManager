@@ -1,11 +1,11 @@
 package cinemaroommanager;
 
+import cinemaroommanager.configuration.CinemaSecurityConfig;
 import cinemaroommanager.controller.CinemaController;
 import cinemaroommanager.dto.requests.PurchaseTicketRequest;
 import cinemaroommanager.dto.responses.*;
 import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.exception.ReturnSeatException;
-import cinemaroommanager.exception.StatsException;
 import cinemaroommanager.service.CinemaService;
 
 import cinemaroommanager.util.TestUtils;
@@ -16,7 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -28,6 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CinemaController.class)
+@Import(CinemaSecurityConfig.class)
 class CinemaControllerTest {
 
     @Autowired
@@ -144,12 +147,13 @@ class CinemaControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", password = "super_secret", roles = "ADMIN")
     @DisplayName("Test for GET /stats endpoint")
     void testEndpointGetStats() throws Exception {
-        when(cinemaService.getStats("super_secret"))
+        when(cinemaService.getStats(/*"super_secret"*/))
                 .thenReturn(new StatsDTO(0, 81, 0));
 
-        var requestBuilder = get("/stats?password=super_secret");
+        var requestBuilder = get("/stats"/*?password=super_secret"*/);
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.income").value(0))
@@ -158,14 +162,19 @@ class CinemaControllerTest {
     }
 
     @Test
-    @DisplayName("Test for GET /stats endpoint with wrong password")
-    void testEndpointGetStats_WrongPassword() throws Exception {
-        when(cinemaService.getStats(null))
-                .thenThrow(new StatsException("The password is wrong!"));
-
+    @WithMockUser
+    @DisplayName("Test for GET /stats endpoint with wrong user")
+    void testEndpointGetStats_WrongUser() throws Exception  {
         var requestBuilder = get("/stats");
         mockMvc.perform(requestBuilder)
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error").value("The password is wrong!"));
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Test for GET /stats endpoint unauthorized user")
+    void testEndpointGetStats_UnauthorizedUser() throws Exception {
+        var requestBuilder = get("/stats");
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isUnauthorized());
     }
 }

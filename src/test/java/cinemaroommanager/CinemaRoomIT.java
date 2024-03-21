@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -127,7 +128,11 @@ public class CinemaRoomIT {
     @Test
     @DisplayName("Test for GET /stats endpoint")
     void testEndpointGetStats() throws Exception {
-        var requestBuilder = get("/stats?password=super_secret");
+        var postProcessor = SecurityMockMvcRequestPostProcessors
+                .httpBasic("admin", "super_secret");
+
+        var requestBuilder = get("/stats"/*?password=super_secret"*/)
+                .with(postProcessor);
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.income").value(0))
@@ -136,11 +141,22 @@ public class CinemaRoomIT {
     }
 
     @Test
-    @DisplayName("Test for GET /stats endpoint with wrong password")
-    void testEndpointGetStats_WrongPassword() throws Exception {
+    @DisplayName("Test for GET /stats endpoint wrong user")
+    void testEndpointGetStats_WrongUser() throws Exception {
+        var postProcessor = SecurityMockMvcRequestPostProcessors
+                .httpBasic("user", "password");
+
+        var requestBuilder = get("/stats")
+                .with(postProcessor);
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Test for GET /stats endpoint unauthorized user")
+    void testEndpointGetStats_UnauthorizedUser() throws Exception {
         var requestBuilder = get("/stats");
         mockMvc.perform(requestBuilder)
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error").value("The password is wrong!"));
+                .andExpect(status().isUnauthorized());
     }
 }
