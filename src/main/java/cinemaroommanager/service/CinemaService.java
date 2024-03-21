@@ -51,10 +51,10 @@ public class CinemaService {
         return new ReturnedTicket(seat);
     }
 
-    public StatsDTO getStats(String password) {
-        if (!("super_secret".equals(password))) { //bad practice to have password here
+    public StatsDTO getStats(/*String password*/) {
+        /*if (!("super_secret".equals(password))) { //bad practice to have password here
             throw new StatsException("The password is wrong!");
-        }
+        }*/
 
         List<Seat> purchasedSeats = cinemaRepository.getPurchasedSeats();
         return new StatsDTO(calculateIncome(purchasedSeats),

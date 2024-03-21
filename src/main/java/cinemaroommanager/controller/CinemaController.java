@@ -34,7 +34,7 @@ public class CinemaController {
     }
 
     @GetMapping("/stats")
-    public StatsDTO getStats(@RequestParam(required = false) String password) {
-        return cinemaService.getStats(password);
+    public StatsDTO getStats(/*@RequestParam(required = false) String password*/) {
+        return cinemaService.getStats(/*password*/);
     }
 }
