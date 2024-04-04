@@ -131,7 +131,7 @@ public class CinemaRoomIT {
         var postProcessor = SecurityMockMvcRequestPostProcessors
                 .httpBasic("admin", "super_secret");
 
-        var requestBuilder = get("/stats"/*?password=super_secret"*/)
+        var requestBuilder = get("/stats")
                 .with(postProcessor);
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())

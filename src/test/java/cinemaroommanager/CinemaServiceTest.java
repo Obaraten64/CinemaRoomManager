@@ -4,7 +4,6 @@ import cinemaroommanager.dto.requests.PurchaseTicketRequest;
 import cinemaroommanager.dto.responses.*;
 import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.exception.ReturnSeatException;
-import cinemaroommanager.exception.StatsException;
 import cinemaroommanager.model.Seat;
 import cinemaroommanager.repository.CinemaRepositoryInMemory;
 import cinemaroommanager.service.CinemaService;
@@ -121,13 +120,6 @@ public class CinemaServiceTest {
         when(cinemaRepository.getAvailableSeats()).thenReturn(seats);
         when(cinemaRepository.getPurchasedSeats()).thenReturn(new ArrayList<>(0));
 
-        assertThat(cinemaService.getStats("super_secret")).isEqualTo(expect);
-    }
-
-    @Test
-    void testGetStats_WrongPassword() {
-        assertThatThrownBy(() -> cinemaService.getStats(null))
-                .isInstanceOf(StatsException.class)
-                .hasMessage("The password is wrong!");
+        assertThat(cinemaService.getStats(/*"super_secret"*/)).isEqualTo(expect);
     }
 }

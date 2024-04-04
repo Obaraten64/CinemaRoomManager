@@ -150,10 +150,10 @@ class CinemaControllerTest {
     @WithMockUser(username = "admin", password = "super_secret", roles = "ADMIN")
     @DisplayName("Test for GET /stats endpoint")
     void testEndpointGetStats() throws Exception {
-        when(cinemaService.getStats(/*"super_secret"*/))
+        when(cinemaService.getStats())
                 .thenReturn(new StatsDTO(0, 81, 0));
 
-        var requestBuilder = get("/stats"/*?password=super_secret"*/);
+        var requestBuilder = get("/stats");
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.income").value(0))
