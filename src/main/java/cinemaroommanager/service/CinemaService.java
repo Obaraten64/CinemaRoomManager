@@ -4,7 +4,6 @@ import cinemaroommanager.dto.requests.PurchaseTicketRequest;
 import cinemaroommanager.dto.responses.*;
 import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.exception.ReturnSeatException;
-import cinemaroommanager.exception.StatsException;
 import cinemaroommanager.model.Seat;
 
 import cinemaroommanager.repository.CinemaRepositoryInMemory;
@@ -51,11 +50,7 @@ public class CinemaService {
         return new ReturnedTicket(seat);
     }
 
-    public StatsDTO getStats(/*String password*/) {
-        /*if (!("super_secret".equals(password))) { //bad practice to have password here
-            throw new StatsException("The password is wrong!");
-        }*/
-
+    public StatsDTO getStats() {
         List<Seat> purchasedSeats = cinemaRepository.getPurchasedSeats();
         return new StatsDTO(calculateIncome(purchasedSeats),
                 cinemaRepository.getAvailableSeats().size(),
