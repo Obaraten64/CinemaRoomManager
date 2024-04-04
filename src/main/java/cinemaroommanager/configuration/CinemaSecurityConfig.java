@@ -27,7 +27,8 @@ public class CinemaSecurityConfig {
                 .formLogin(Customizer.withDefaults()) //to have default login
                 .httpBasic(Customizer.withDefaults()) //to send basic auth in http
                 .csrf(AbstractHttpConfigurer::disable);/*disables csrf, but otherwise POST request won't work
-                    Anyways this has different implementation in real projects*/
+                    Anyways this has different implementation in real projects
+                .exceptionHandling() // can implement custom exception with http error 404 NOT FOUND */
         return http.build();
     }
 
