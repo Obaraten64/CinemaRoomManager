@@ -8,6 +8,7 @@ import cinemaroommanager.dto.responses.PurchaseTicketResponse;
 import cinemaroommanager.dto.responses.StatsDTO;
 import cinemaroommanager.service.CinemaService;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,7 +30,7 @@ public class CinemaController {
     }
 
     @PostMapping("/return")
-    public ReturnedTicket returnTicket(@RequestBody Token token) {
+    public ReturnedTicket returnTicket(@Valid @RequestBody Token token) {
         return cinemaService.returnTicket(token.token());
     }
 

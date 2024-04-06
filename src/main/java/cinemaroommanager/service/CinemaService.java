@@ -42,8 +42,8 @@ public class CinemaService {
         return new PurchaseTicketResponse(seat);
     }
 
-    public ReturnedTicket returnTicket(UUID uuid) {
-        Seat seat = cinemaRepository.getSeatByUUID(uuid)
+    public ReturnedTicket returnTicket(String token) {
+        Seat seat = cinemaRepository.getSeatByUUID(UUID.fromString(token))
                 .orElseThrow(() -> new ReturnSeatException("Wrong token!"));
 
         seat.returnSeat();
