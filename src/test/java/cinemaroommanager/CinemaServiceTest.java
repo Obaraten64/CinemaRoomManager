@@ -97,7 +97,7 @@ public class CinemaServiceTest {
         when(cinemaRepository.getSeatByUUID(UUID.fromString(uuid)))
                 .thenReturn(Optional.of(new Seat(1, 1)));
 
-        ReturnedTicket actual = cinemaService.returnTicket(UUID.fromString(uuid));
+        ReturnedTicket actual = cinemaService.returnTicket(uuid);
         assertThat(actual).isEqualTo(expect);
     }
 
@@ -107,7 +107,7 @@ public class CinemaServiceTest {
         when(cinemaRepository.getSeatByUUID(UUID.fromString(uuid)))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> cinemaService.returnTicket(UUID.fromString(uuid)))
+        assertThatThrownBy(() -> cinemaService.returnTicket(uuid))
                 .isInstanceOf(ReturnSeatException.class)
                 .hasMessage("Wrong token!");
     }
@@ -120,6 +120,6 @@ public class CinemaServiceTest {
         when(cinemaRepository.getAvailableSeats()).thenReturn(seats);
         when(cinemaRepository.getPurchasedSeats()).thenReturn(new ArrayList<>(0));
 
-        assertThat(cinemaService.getStats(/*"super_secret"*/)).isEqualTo(expect);
+        assertThat(cinemaService.getStats()).isEqualTo(expect);
     }
 }

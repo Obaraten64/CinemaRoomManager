@@ -118,7 +118,7 @@ class CinemaControllerTest {
     @Test
     @DisplayName("Test for POST /return endpoint")
     void testEndpointReturnTicket() throws Exception {
-        when(cinemaService.returnTicket(UUID.fromString("409548d1-2f6b-4180-8f70-5800c77c17a8")))
+        when(cinemaService.returnTicket("409548d1-2f6b-4180-8f70-5800c77c17a8"))
                 .thenReturn(new ReturnedTicket(new SeatDTO(1, 1, 10)));
 
         var requestBuilder = post("/return")
@@ -134,7 +134,7 @@ class CinemaControllerTest {
     @Test
     @DisplayName("Test for POST /return endpoint(when token is expired)")
     void testEndpointReturn_TicketException() throws Exception {
-        when(cinemaService.returnTicket(UUID.fromString("409548d1-2f6b-4180-8f70-5800c77c17a8")))
+        when(cinemaService.returnTicket("409548d1-2f6b-4180-8f70-5800c77c17a8"))
                 .thenThrow(new ReturnSeatException("Wrong token!"));
 
         var requestBuilder = post("/return")
