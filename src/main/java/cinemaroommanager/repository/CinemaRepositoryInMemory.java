@@ -3,15 +3,16 @@ package cinemaroommanager.repository;
 import cinemaroommanager.configuration.CinemaConfig;
 import cinemaroommanager.model.Seat;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
-public class CinemaRepositoryInMemory {
+//@Component
+@Deprecated
+public class CinemaRepositoryInMemory implements CinemaRepository {
     private final int columns;
     private final int rows;
     private final ArrayList<Seat> seats;
@@ -62,5 +63,9 @@ public class CinemaRepositoryInMemory {
         return seats.stream()
                 .filter(Seat::isPurchased)
                 .toList();
+    }
+
+    public void updateSeat(Seat seat) { //don't like this
+        //nothing
     }
 }

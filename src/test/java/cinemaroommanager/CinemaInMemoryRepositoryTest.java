@@ -11,11 +11,12 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CinemaRepositoryTest {
+@Deprecated
+public class CinemaInMemoryRepositoryTest {
 
     CinemaRepositoryInMemory cinemaRepository;
 
-    public CinemaRepositoryTest() {
+    public CinemaInMemoryRepositoryTest() {
         CinemaConfig cinemaConfig = new CinemaConfig(9, 9);
         cinemaRepository = new CinemaRepositoryInMemory(cinemaConfig);
     }
