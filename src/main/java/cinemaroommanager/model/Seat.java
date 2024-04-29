@@ -1,13 +1,33 @@
 package cinemaroommanager.model;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+
+import java.sql.Types;
 import java.util.UUID;
 
+@Entity
+@Table(name = "cinema")
 public class Seat {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    @Column(name = "uuid")
+    @JdbcTypeCode(Types.VARCHAR) //default maps to binary type
     private UUID uuid;
-    private final int row;
-    private final int column;
-    private final int price;
+    @Column(name = "rowNumber")
+    private int row;
+    @Column(name = "columnNumber")
+    private int column;
+    @Column(name = "price")
+    private int price;
+    @Column(name = "isPurchased")
     private boolean isPurchased;
+
+    public Seat() {
+
+    }
 
     public Seat(int row, int column) {
         this.column = column;
