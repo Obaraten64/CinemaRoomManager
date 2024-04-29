@@ -8,19 +8,24 @@ import org.flywaydb.core.api.migration.Context;
 import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 
 @Component
-public class V2__Insert_Data_Into_Cinema extends BaseJavaMigration {
+public class R__Insert_Data_Into_Cinema extends BaseJavaMigration {
     private final int rows;
     private final int columns;
 
-    public V2__Insert_Data_Into_Cinema(CinemaConfig cinemaConfig) {
+    public R__Insert_Data_Into_Cinema(CinemaConfig cinemaConfig) {
         rows = cinemaConfig.getNumberOfRows();
         columns = cinemaConfig.getNumberOfColumns();
     }
 
     @Override
     public void migrate(Context context) throws Exception {
+        try (Statement statement = context.getConnection().createStatement()) {
+            statement.execute("TRUNCATE TABLE cinema");
+        }
+
         try (PreparedStatement statement = context.getConnection().prepareStatement(
                 "INSERT INTO cinema (rowNumber, columnNumber, price, isPurchased) VALUES (?, ?, ?, ?)"
             )) {
@@ -34,5 +39,10 @@ public class V2__Insert_Data_Into_Cinema extends BaseJavaMigration {
                 }
             }
         }
+    }
+
+    @Override
+    public Integer getChecksum() {
+        return Long.valueOf(System.currentTimeMillis()).intValue();
     }
 }
