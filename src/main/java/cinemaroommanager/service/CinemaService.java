@@ -5,8 +5,8 @@ import cinemaroommanager.dto.responses.*;
 import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.exception.ReturnSeatException;
 import cinemaroommanager.model.Seat;
+import cinemaroommanager.repository.CinemaRepository;
 
-import cinemaroommanager.repository.CinemaRepositoryInMemory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,9 +14,10 @@ import java.util.UUID;
 
 @Service
 public class CinemaService {
-    private final CinemaRepositoryInMemory cinemaRepository;
+    //TODO: OPTIONAL. add logic of choosing one of CinemaRepository beans
+    private final CinemaRepository cinemaRepository;
 
-    public CinemaService(CinemaRepositoryInMemory cinemaRepository) {
+    public CinemaService(CinemaRepository cinemaRepository) {
         this.cinemaRepository = cinemaRepository;
     }
 
@@ -39,6 +40,8 @@ public class CinemaService {
         }
 
         seat.purchaseSeat();
+        cinemaRepository.updateSeat(seat);
+
         return new PurchaseTicketResponse(seat);
     }
 
@@ -47,6 +50,8 @@ public class CinemaService {
                 .orElseThrow(() -> new ReturnSeatException("Wrong token!"));
 
         seat.returnSeat();
+        cinemaRepository.updateSeat(seat);
+
         return new ReturnedTicket(seat);
     }
 

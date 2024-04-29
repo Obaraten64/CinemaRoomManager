@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CinemaRoomManagerApplication {
     //TODO: Add ability to work with database instead of inmemory
         //TODO: Slice test for DBRepository
-        //TODO: IT test with db
     public static void main(String[] args) {
         SpringApplication.run(CinemaRoomManagerApplication.class, args);
     }
