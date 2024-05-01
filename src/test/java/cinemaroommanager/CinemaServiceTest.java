@@ -5,7 +5,7 @@ import cinemaroommanager.dto.responses.*;
 import cinemaroommanager.exception.PurchaseSeatException;
 import cinemaroommanager.exception.ReturnSeatException;
 import cinemaroommanager.model.Seat;
-import cinemaroommanager.repository.CinemaRepositoryInMemory;
+import cinemaroommanager.repository.CinemaRepository;
 import cinemaroommanager.service.CinemaService;
 
 import cinemaroommanager.util.TestUtils;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 public class CinemaServiceTest {
 
     @Mock
-    CinemaRepositoryInMemory cinemaRepository;
+    CinemaRepository cinemaRepository;
 
     @InjectMocks
     CinemaService cinemaService;
