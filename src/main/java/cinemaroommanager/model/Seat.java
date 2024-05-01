@@ -17,13 +17,13 @@ public class Seat {
     @JdbcTypeCode(Types.VARCHAR) //default maps to binary type
     private UUID uuid;
     @Column(name = "rowNumber")
-    private int row;
+    private Integer row;
     @Column(name = "columnNumber")
-    private int column;
+    private Integer column;
     @Column(name = "price")
-    private int price;
+    private Integer price;
     @Column(name = "isPurchased")
-    private boolean isPurchased;
+    private Boolean isPurchased;
 
     public Seat() {
 
