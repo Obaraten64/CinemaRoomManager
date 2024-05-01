@@ -1,7 +1,6 @@
 package cinemaroommanager;
 
-import cinemaroommanager.dto.requests.PurchaseTicketRequest;
-import cinemaroommanager.service.CinemaService;
+import cinemaroommanager.repository.CinemaRepositoryDB;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
@@ -12,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -29,6 +29,9 @@ public class CinemaRoomIT {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private CinemaRepositoryDB cinemaRepository;
 
     @Test
     @DisplayName("Test for GET /seats endpoint")
@@ -78,9 +81,8 @@ public class CinemaRoomIT {
 
     @Test
     @DisplayName("Test for POST /purchase endpoint(when ticket is purchased)")
+    @Sql(statements = "UPDATE cinema SET isPurchased = true WHERE rowNumber = 1 AND columnNumber = 1")
     void testEndpointPurchasePurchasedException() throws Exception {
-        purchaseTicketForTest(); //purchase seat before testing exception
-
         var requestBuilder = post("/purchase")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"row\":1,\n\"column\":1}");
@@ -92,8 +94,9 @@ public class CinemaRoomIT {
 
     @Test
     @DisplayName("Test for POST /return endpoint")
+    @Sql(statements = "UPDATE cinema SET uuid = '409548d1-2f6b-4180-8f70-5800c77c17a8' WHERE rowNumber = 1 AND columnNumber = 1")
     void testEndpointReturn() throws Exception {
-        String token = purchaseTicketForTest(); //purchase seat before testing exception);
+        String token = cinemaRepository.getSeatByRowAndColumn(1, 1).get().getUuid().toString();//still don't like this
 
         var requestBuilder = post("/return")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -115,14 +118,6 @@ public class CinemaRoomIT {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error")
                         .value("Wrong token!"));
-    }
-
-    @Autowired
-    CinemaService cinemaService;
-    private String purchaseTicketForTest() { //don't like this
-        return cinemaService.purchaseSeat(new PurchaseTicketRequest(1, 1))
-                .token()
-                .toString();
     }
 
     @Test
