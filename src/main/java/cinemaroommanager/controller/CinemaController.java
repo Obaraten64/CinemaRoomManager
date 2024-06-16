@@ -9,15 +9,13 @@ import cinemaroommanager.dto.responses.StatsDTO;
 import cinemaroommanager.service.CinemaService;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@AllArgsConstructor
 public class CinemaController {
     private final CinemaService cinemaService;
-
-    public CinemaController(CinemaService cinemaService) {
-        this.cinemaService = cinemaService;
-    }
 
     @GetMapping("/seats")
     public CinemaRoomDTO getSeats() {

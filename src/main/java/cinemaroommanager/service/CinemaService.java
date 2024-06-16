@@ -7,19 +7,18 @@ import cinemaroommanager.exception.ReturnSeatException;
 import cinemaroommanager.model.Seat;
 import cinemaroommanager.repository.CinemaRepository;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class CinemaService {
     //TODO: OPTIONAL. add logic of choosing one of CinemaRepository beans
     private final CinemaRepository cinemaRepository;
-
-    public CinemaService(CinemaRepository cinemaRepository) {
-        this.cinemaRepository = cinemaRepository;
-    }
 
     public CinemaRoomDTO getCinemaRoom() {
         return new CinemaRoomDTO(cinemaRepository.getRows(),
@@ -30,6 +29,7 @@ public class CinemaService {
                         .toList());
     }
 
+    @Transactional
     public PurchaseTicketResponse purchaseSeat(PurchaseTicketRequest ticket) {
         Seat seat = cinemaRepository.getSeatByRowAndColumn(ticket.row(), ticket.column())
                 .orElseThrow(() ->
@@ -45,6 +45,7 @@ public class CinemaService {
         return new PurchaseTicketResponse(seat);
     }
 
+    @Transactional
     public ReturnedTicket returnTicket(String token) {
         Seat seat = cinemaRepository.getSeatByUUID(UUID.fromString(token))
                 .orElseThrow(() -> new ReturnSeatException("Wrong token!"));
