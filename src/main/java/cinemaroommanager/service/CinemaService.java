@@ -35,7 +35,7 @@ public class CinemaService {
                 .orElseThrow(() ->
                         new PurchaseSeatException("The number of a row or a column is out of bounds!"));
 
-        if (seat.isPurchased()) {
+        if (seat.getIsPurchased()) {
             throw new PurchaseSeatException("The ticket has been already purchased!");
         }
 
