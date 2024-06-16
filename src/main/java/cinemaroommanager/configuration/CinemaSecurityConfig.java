@@ -23,6 +23,8 @@ public class CinemaSecurityConfig {
                         .requestMatchers("/seats").permitAll()
                         .requestMatchers(HttpMethod.POST).permitAll()
                         .requestMatchers("/stats").hasRole("ADMIN")
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
                         .anyRequest().denyAll())
                 .formLogin(Customizer.withDefaults()) //to have default login
                 .httpBasic(Customizer.withDefaults()) //to send basic auth in http

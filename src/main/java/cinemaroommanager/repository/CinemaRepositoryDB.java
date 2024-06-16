@@ -54,14 +54,14 @@ public interface CinemaRepositoryDB extends CinemaRepository, JpaRepository<Seat
     @Override
     default List<Seat> getAvailableSeats() {
         return findAll().stream()
-                .filter(s -> !s.isPurchased())
+                .filter(s -> !s.getIsPurchased())
                 .toList();
     }
 
     @Override
     default List<Seat> getPurchasedSeats() {
         return findAll().stream()
-                .filter(Seat::isPurchased)
+                .filter(Seat::getIsPurchased)
                 .toList();
     }
 

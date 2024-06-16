@@ -55,13 +55,13 @@ public class CinemaRepositoryInMemory implements CinemaRepository {
 
     public List<Seat> getAvailableSeats() {
         return seats.stream()
-                .filter(s -> !s.isPurchased())
+                .filter(s -> !s.getIsPurchased())
                 .toList();
     }
 
     public List<Seat> getPurchasedSeats() {
         return seats.stream()
-                .filter(Seat::isPurchased)
+                .filter(Seat::getIsPurchased)
                 .toList();
     }
 

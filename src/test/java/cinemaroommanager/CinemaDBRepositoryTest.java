@@ -85,7 +85,7 @@ public class CinemaDBRepositoryTest {
         assertThat(seats)
                 .hasOnlyElementsOfType(Seat.class)
                 .hasSize(81)
-                .allMatch(s -> !s.isPurchased());
+                .allMatch(s -> !s.getIsPurchased());
     }
 
     @Test
@@ -111,7 +111,7 @@ public class CinemaDBRepositoryTest {
         purchaseTwoSeats();
 
         for (Seat seat : cinemaRepository.findAll()) {
-            System.out.println(seat.isPurchased());
+            System.out.println(seat.getIsPurchased());
         }
 
         List<Seat> seats = cinemaRepository.getPurchasedSeats();

@@ -1,6 +1,9 @@
 package cinemaroommanager.model;
 
 import jakarta.persistence.*;
+
+import lombok.*;
+
 import org.hibernate.annotations.JdbcTypeCode;
 
 import java.sql.Types;
@@ -8,6 +11,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "cinema")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Seat {
 
     @Id
@@ -25,35 +32,11 @@ public class Seat {
     @Column(name = "isPurchased")
     private Boolean isPurchased;
 
-    public Seat() {
-
-    }
-
     public Seat(int row, int column) {
         this.column = column;
         this.row = row;
         price = row < 5 ? 10 : 8;
         isPurchased = false;
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public int getRow() {
-        return row;
-    }
-
-    public int getColumn() {
-        return column;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public boolean isPurchased() {
-        return isPurchased;
     }
 
     public void purchaseSeat() {

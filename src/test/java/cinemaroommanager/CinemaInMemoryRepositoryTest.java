@@ -71,7 +71,7 @@ public class CinemaInMemoryRepositoryTest {
         assertThat(seats)
                 .hasOnlyElementsOfType(Seat.class)
                 .hasSize(81)
-                .allMatch(s -> !s.isPurchased());
+                .allMatch(s -> !s.getIsPurchased());
     }
 
     @Test
